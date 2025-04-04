@@ -1,4 +1,4 @@
-import { handler } from '../lib/lambda/getProductsList';
+import { handler } from '../lambda/getProductsList';
 
 test('should return all products', async () => {
   process.env.PRODUCTS = JSON.stringify([
