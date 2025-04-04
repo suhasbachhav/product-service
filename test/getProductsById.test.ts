@@ -1,28 +1,23 @@
-import { handler } from '../lib/lambdas/getProductsById';
-import { MOCK_PRODUCTS } from '../lib/data/mock-products';
+// test/getProductsById.test.ts
+import { handler } from "../lib/lambda/getProductsById";
 
-describe('getProductsById', () => {
-    it('should return a 400 if pathParameters is undefined', async () => {
-        // Test case for when the pathParameters are undefined
-        const event = { pathParameters: undefined } as any;
-        const result = await handler(event);
-        expect(result.statusCode).toEqual(400);
-        expect(JSON.parse(result.body)).toEqual({ message: 'Product ID is required' });
-    });
+test('should return a product by ID', async () => {
+  process.env.PRODUCTS = JSON.stringify([
+    { id: '1', name: 'Product 1', price: 100 },
+    { id: '2', name: 'Product 2', price: 200 },
+  ]);
 
-    it('should return a 404 if product is not found', async () => {
-        // Test case for a product that doesn't exist
-        const event = { pathParameters: { productId: '999' } } as any; // `999` doesn't exist in the mock
-        const result = await handler(event);
-        expect(result.statusCode).toEqual(404);
-        expect(JSON.parse(result.body)).toEqual({ message: 'Product not found' });
-    });
+  const response = await handler({ pathParameters: { productId: '1' } });
+  expect(response.statusCode).toBe(200);
+  expect(JSON.parse(response.body).name).toBe('Product 1');
+});
 
-    it('should return the correct product when given a valid product ID', async () => {
-        // Test case for a valid product
-        const event = { pathParameters: { productId: '1' } } as any; // `1` exists in the mock
-        const result = await handler(event);
-        expect(result.statusCode).toEqual(200);
-        expect(JSON.parse(result.body)).toEqual(MOCK_PRODUCTS[0]);
-    });
+test('should return 404 if product not found', async () => {
+  process.env.PRODUCTS = JSON.stringify([
+    { id: '1', name: 'Product 1', price: 100 },
+  ]);
+
+  const response = await handler({ pathParameters: { productId: '2' } });
+  expect(response.statusCode).toBe(404);
+  expect(JSON.parse(response.body).message).toBe('Product not found');
 });

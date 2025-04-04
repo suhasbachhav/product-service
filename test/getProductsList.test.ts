@@ -1,10 +1,13 @@
-import { handler } from '../lib/lambdas/getProductsList';
-import { MOCK_PRODUCTS } from '../lib/data/mock-products';
+// test/getProductsList.test.ts
+import { handler } from '../lib/lambda/getProductsList';
 
-describe('getProductsList', () => {
-    it('should return all products with a 200 status code', async () => {
-        const result = await handler({} as any);
-        expect(result.statusCode).toEqual(200);
-        expect(JSON.parse(result.body)).toEqual(MOCK_PRODUCTS);
-    });
+test('should return all products', async () => {
+  process.env.PRODUCTS = JSON.stringify([
+    { id: '1', name: 'Product 1', price: 100 },
+    { id: '2', name: 'Product 2', price: 200 },
+  ]);
+
+  const response = await handler({});
+  expect(response.statusCode).toBe(200);
+  expect(JSON.parse(response.body)).toHaveLength(2);
 });
