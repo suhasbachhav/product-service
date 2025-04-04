@@ -1,4 +1,3 @@
-// test/getProductsList.test.ts
 import { handler } from '../lib/lambda/getProductsList';
 
 test('should return all products', async () => {

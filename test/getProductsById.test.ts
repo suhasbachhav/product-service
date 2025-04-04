@@ -1,4 +1,3 @@
-// test/getProductsById.test.ts
 import { handler } from "../lib/lambda/getProductsById";
 
 test('should return a product by ID', async () => {
