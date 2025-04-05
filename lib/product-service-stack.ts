@@ -3,12 +3,13 @@ import { Construct } from 'constructs';
 import * as dynamodb from 'aws-cdk-lib/aws-dynamodb';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
 import * as apigateway from 'aws-cdk-lib/aws-apigateway';
+import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 
 export class ProductServiceStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props); // Important: Call `super()` to initialize the stack
 
-    // Create DynamoDB Tables
+    const dynamoDB = new DynamoDBClient({ region: "ap-south-1" });
     const productsTable = new dynamodb.Table(this, 'ProductsTable', {
       tableName: 'products',
       partitionKey: { name: 'id', type: dynamodb.AttributeType.STRING },
