@@ -1,6 +1,7 @@
 export const handler = async (event: any) => {
     const products = JSON.parse(process.env.PRODUCTS || '[]');
     const productId = event.pathParameters.productId;
+    
     const product = products.find((p: any) => p.id === productId);
   
     if (!product) {
