@@ -36,6 +36,15 @@ export const handler: Handler = async (event: any) => {
       };
     });
 
+    let data = (joinedData || []).find((p) => p.id === productId);
+
+    if(!data){
+      return {
+        statusCode: 404,
+        body: JSON.stringify({ message: 'Data not found' }),
+      };
+    }
+
     return {
       statusCode: 200,
       body: JSON.stringify((joinedData || []).find((p) => p.id === productId)),
