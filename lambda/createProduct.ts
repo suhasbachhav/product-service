@@ -7,6 +7,12 @@ import {
   const dynamoDB = new DynamoDBClient({ region: process.env.AWS_REGION });
   const productsTableName = process.env.PRODUCTS_TABLE_NAME;
   const stockTableName = process.env.STOCK_TABLE_NAME;
+
+  const headers = {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "POST, GET",
+  };
+
   
   export const handler = async (event: any) => {
     try {
@@ -15,7 +21,7 @@ import {
       const productId = uuidv4();
   
       if (!title || !price || !count) {
-        return { statusCode: 400, body: JSON.stringify({ message: "Invalid input" }) };
+        return { statusCode: 400, headers, body: JSON.stringify({ message: "Invalid input" }) };
       }
   
       // Transactional Write
@@ -46,13 +52,13 @@ import {
   
       await dynamoDB.send(command);
   
-      return { statusCode: 201, body: JSON.stringify({ message: "Product created" }) };
+      return { statusCode: 201, headers, body: JSON.stringify({ message: "Product created" }) };
     } catch (err) {
       if (err instanceof Error) {
         console.error("Error:", err.message);
       } else {
         console.error("Error:", err);
       }
-      return { statusCode: 500, body: JSON.stringify({ message: "Internal Server Error" }) };
+      return { statusCode: 500, headers, body: JSON.stringify({ message: "Internal Server Error" }) };
     }
   };

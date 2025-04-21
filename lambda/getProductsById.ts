@@ -3,6 +3,11 @@ import { GetItemCommand, DynamoDBClient } from "@aws-sdk/client-dynamodb";
 const dynamoDB = new DynamoDBClient({ region: process.env.AWS_REGION });
 const productsTableName = process.env.PRODUCTS_TABLE_NAME;
 
+const headers = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "POST, GET",
+};
+
 export const handler = async (event: any) => {
   try {
     const productId = event.pathParameters?.productId;
@@ -11,11 +16,10 @@ export const handler = async (event: any) => {
     if (!productId) {
       return {
         statusCode: 400,
+        headers,
         body: JSON.stringify({ message: "Product ID is required" }),
       };
     }
-
-    console.log(`Fetching product with ID: ${productId}`);
 
     // Query DynamoDB to fetch product by id
     const productCommand = new GetItemCommand({
@@ -25,17 +29,14 @@ export const handler = async (event: any) => {
       },
     });
 
-    console.log(`Table Name: ${productsTableName}`);
-    console.log(`Key:`, { id: { S: productId } });
-    console.log(`productCommand:`, productCommand);
     const productResult = await dynamoDB.send(productCommand);
-    console.log(`productResult:`, productResult);
     const productItem = productResult.Item;
 
     // Check if product exists
     if (!productItem) {
       return {
         statusCode: 404,
+        headers,
         body: JSON.stringify({ message: "Product not found" }),
       };
     }
@@ -50,6 +51,7 @@ export const handler = async (event: any) => {
 
     return {
       statusCode: 200,
+      headers,
       body: JSON.stringify(product),
     };
   } catch (error) {
@@ -61,6 +63,7 @@ export const handler = async (event: any) => {
 
     return {
       statusCode: 500,
+      headers,
       body: JSON.stringify({ message: "Internal Server Error" }),
     };
   }

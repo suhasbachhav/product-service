@@ -4,11 +4,13 @@ const dynamoDB = new DynamoDBClient({ region: process.env.AWS_REGION });
 const productsTableName = process.env.PRODUCTS_TABLE_NAME;
 const stockTableName = process.env.STOCK_TABLE_NAME;
 
+const headers = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "POST, GET",
+};
+
 export const handler = async () => {
   try {
-    console.log("Fetching products list...");
-    console.log(`Products Table: ${productsTableName}`);
-    console.log(`Stock Table: ${stockTableName}`);
 
     // Validate environment variables
     if (!productsTableName || !stockTableName) {
@@ -22,8 +24,6 @@ export const handler = async () => {
     const products = productsResult.Items || [];
     const stock = stockResult.Items || [];
 
-    console.log("Fetched products:", products);
-    console.log("Fetched stock:", stock);
 
     // Join products and stock tables
     const detailedProducts = products.map((product) => {
@@ -39,6 +39,7 @@ export const handler = async () => {
 
     return {
       statusCode: 200,
+      headers,
       body: JSON.stringify(detailedProducts),
     };
   } catch (error) {
@@ -46,6 +47,7 @@ export const handler = async () => {
 
     return {
       statusCode: 500,
+      headers,
       body: JSON.stringify({ message: "Internal Server Error" }),
     };
   }
