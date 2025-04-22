@@ -21,6 +21,7 @@ export class ProductServiceStack extends cdk.Stack {
       environment: {
         PRODUCTS_TABLE_NAME: props.productsTable.tableName,
         STOCK_TABLE_NAME: props.stockTable.tableName,
+        UI_URL:  'https://d12ge7e5mdcb2a.cloudfront.net',
       },
     });
 
@@ -40,6 +41,7 @@ export class ProductServiceStack extends cdk.Stack {
       environment: {
         PRODUCTS_TABLE_NAME: props.productsTable.tableName,
         STOCK_TABLE_NAME: props.stockTable.tableName,
+        UI_URL:  'https://d12ge7e5mdcb2a.cloudfront.net',
       },
     });
 
@@ -53,6 +55,7 @@ export class ProductServiceStack extends cdk.Stack {
       environment: {
         PRODUCTS_TABLE_NAME: props.productsTable.tableName,
         STOCK_TABLE_NAME: props.stockTable.tableName,
+        UI_URL:  'https://d12ge7e5mdcb2a.cloudfront.net',
       },
     });
     

@@ -3,14 +3,15 @@ import {
     TransactWriteItemsCommand,
   } from "@aws-sdk/client-dynamodb";
   import { v4 as uuidv4 } from "uuid";
-  
+ 
   const dynamoDB = new DynamoDBClient({ region: process.env.AWS_REGION });
   const productsTableName = process.env.PRODUCTS_TABLE_NAME;
   const stockTableName = process.env.STOCK_TABLE_NAME;
 
   const headers = {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "POST, GET",
+    "Access-Control-Allow-Origin": process.env.UI_URL,
+    "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type",
   };
 
   

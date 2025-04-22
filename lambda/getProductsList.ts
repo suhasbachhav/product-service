@@ -5,8 +5,9 @@ const productsTableName = process.env.PRODUCTS_TABLE_NAME;
 const stockTableName = process.env.STOCK_TABLE_NAME;
 
 const headers = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "POST, GET",
+  "Access-Control-Allow-Origin": process.env.UI_URL,
+  "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type",
 };
 
 export const handler = async () => {
