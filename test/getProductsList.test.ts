@@ -1,9 +1,23 @@
-import { handler } from '../lib/lambda/getProductsList';
+import { handler } from '../lambda/getProductsList';
 
 test('should return all products', async () => {
   process.env.PRODUCTS = JSON.stringify([
-    { id: '1', name: 'Product 1', price: 100 },
-    { id: '2', name: 'Product 2', price: 200 },
+    {
+        id: '1',
+        title: 'Smartphone',
+        description: 'A high-end smartphone with a powerful processor and excellent camera.',
+        price: 699,
+        logoUrl: 'https://example.com/images/smartphone.jpg',
+        count: 50,
+      },
+      {
+        id: '2',
+        title: 'Laptop',
+        description: 'A lightweight laptop with a long battery life, perfect for work and travel.',
+        price: 999,
+        logoUrl: 'https://example.com/images/laptop.jpg',
+        count: 30,
+      },
   ]);
 
   const response = await handler({});
