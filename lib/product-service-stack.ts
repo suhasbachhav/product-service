@@ -2,6 +2,7 @@ import * as cdk from 'aws-cdk-lib';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
 import * as dynamodb from 'aws-cdk-lib/aws-dynamodb';
 import * as apigateway from 'aws-cdk-lib/aws-apigateway';
+import * as iam from 'aws-cdk-lib/aws-iam';
 import { Construct } from 'constructs';
 
 interface ProductServiceStackProps extends cdk.StackProps {
@@ -58,6 +59,11 @@ export class ProductServiceStack extends cdk.Stack {
         UI_URL:  'https://d12ge7e5mdcb2a.cloudfront.net',
       },
     });
+
+    createProductLambda.addPermission('ApiGatewayInvokePermission', {
+      principal: new iam.ServicePrincipal('apigateway.amazonaws.com'),
+      sourceArn: `arn:aws:execute-api:${this.region}:${this.account}:${api.restApiId}/*`,
+    });
     
     props.productsTable.grantWriteData(createProductLambda);
     props.stockTable.grantWriteData(createProductLambda);
@@ -72,6 +78,15 @@ export class ProductServiceStack extends cdk.Stack {
 
 
     // Add POST route to API Gateway
-    productsResource.addMethod("POST", new apigateway.LambdaIntegration(createProductLambda));
+    productsResource.addMethod('POST', new apigateway.LambdaIntegration(createProductLambda), {
+      methodResponses: [
+        {
+          statusCode: "200",
+          responseParameters: {
+            "method.response.header.Access-Control-Allow-Origin": true,
+          },
+        },
+      ],
+    });
   }
 }
