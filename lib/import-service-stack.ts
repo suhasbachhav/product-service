@@ -87,7 +87,8 @@ export class ImportServiceStack extends cdk.Stack {
     new cdk.CfnOutput(this, 'ImportAPI', {
       value: api.url,
     });
-  
+
+    
     new cdk.CfnOutput(this, 'DistributionId', {
         value: 'E3IDOV53MUMDP3',
     });
@@ -95,4 +96,7 @@ export class ImportServiceStack extends cdk.Stack {
     new cdk.CfnOutput(this, 'CloudFrontURL', {
     value: 'd12ge7e5mdcb2a.cloudfront.net',
     });
+  
+    
+  }
 }
