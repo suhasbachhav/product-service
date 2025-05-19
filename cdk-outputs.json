@@ -1,0 +1,14 @@
+{
+    "InfraStack": {
+      "BucketName": "infrastack-websitebucket75c24d94-suhas",
+      "CloudFrontURL": "d12ge7e5mdcb2a.cloudfront.net",
+      "ProductServiceApiEndpointE57F6293": "https://6adfxh9pvj.execute-api.ap-south-1.amazonaws.com/prod/",
+      "DistributionId": "E1L4KL50AHHB3I",
+      "ProductsApiEndpoint": "https://6adfxh9pvj.execute-api.ap-south-1.amazonaws.com/prod/"
+    },
+    "ImportServiceStack": {
+      "ImportApiEndpointD68DD113": "https://2mmo293kcj.execute-api.ap-south-1.amazonaws.com/prod/",
+      "ImportBucketName": "importservicestack-importbucketbaf3a8e9-7ceibwwnkb0e",
+      "ImportAPI": "https://2mmo293kcj.execute-api.ap-south-1.amazonaws.com/prod/"
+    }
+  }
