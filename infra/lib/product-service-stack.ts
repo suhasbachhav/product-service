@@ -4,24 +4,29 @@ import * as dynamodb from "aws-cdk-lib/aws-dynamodb";
 import { Construct } from "constructs";
 import { createLambda } from "./utils/create-lambda";
 
+interface ProductServiceStackProps extends cdk.StackProps {
+  productsTable: dynamodb.Table; // Add productsTable as a property
+  stockTable: dynamodb.Table;    // Add stockTable as a property
+}
+
 export class ProductServiceStack extends cdk.Stack {
-  private productTable: dynamodb.Table;
-  private stockTable: dynamodb.Table;
+  // private productTable: dynamodb.Table;
+  // private stockTable: dynamodb.Table;
 
-  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
+  constructor(scope: Construct, id: string, props: ProductServiceStackProps) {
     super(scope, id, props);
-
+/* 
     // Create tables
-    this.productTable = new dynamodb.Table(this, "Products", {
+     props.productsTable = new dynamodb.Table(this, "Products", {
       tableName: "Products",
       partitionKey: { name: "id", type: dynamodb.AttributeType.STRING },
     });
 
-    this.stockTable = new dynamodb.Table(this, "Stock", {
+    props.stockTable = new dynamodb.Table(this, "Stock", {
       tableName: "Stock",
       partitionKey: { name: "product_id", type: dynamodb.AttributeType.STRING },
     });
-
+ */
     const api = new apigateway.RestApi(this, "ProductServiceApi", {
       restApiName: "Product Service API",
       description: "This API serves the Product Service.",
@@ -33,25 +38,25 @@ export class ProductServiceStack extends cdk.Stack {
 
     // Create lambdas
     const getProductsLambda = createLambda(this, "getProducts", {
-      PRODUCTS_TABLE_NAME: this.productTable.tableName,
-      STOCK_TABLE_NAME: this.stockTable.tableName,
+      PRODUCTS_TABLE_NAME: props.productsTable.tableName,
+      STOCK_TABLE_NAME: props.stockTable.tableName,
     });
-    this.productTable.grantReadData(getProductsLambda);
-    this.stockTable.grantReadData(getProductsLambda);
+     props.productsTable.grantReadData(getProductsLambda);
+    props.stockTable.grantReadData(getProductsLambda);
 
     const getProductByIdLambda = createLambda(this, "getProductById", {
-      PRODUCTS_TABLE_NAME: this.productTable.tableName,
-      STOCK_TABLE_NAME: this.stockTable.tableName,
+      PRODUCTS_TABLE_NAME:  props.productsTable.tableName,
+      STOCK_TABLE_NAME: props.stockTable.tableName,
     });
-    this.productTable.grantReadData(getProductByIdLambda);
-    this.stockTable.grantReadData(getProductByIdLambda);
+     props.productsTable.grantReadData(getProductByIdLambda);
+    props.stockTable.grantReadData(getProductByIdLambda);
 
     const createProductLambda = createLambda(this, "createProduct", {
-      PRODUCTS_TABLE_NAME: this.productTable.tableName,
-      STOCK_TABLE_NAME: this.stockTable.tableName,
+      PRODUCTS_TABLE_NAME:  props.productsTable.tableName,
+      STOCK_TABLE_NAME: props.stockTable.tableName,
     });
-    this.productTable.grantWriteData(createProductLambda);
-    this.stockTable.grantWriteData(createProductLambda);
+     props.productsTable.grantWriteData(createProductLambda);
+    props.stockTable.grantWriteData(createProductLambda);
 
     // Create integrations
     const getProductsLambdaIntegration = new apigateway.LambdaIntegration(
@@ -77,7 +82,7 @@ export class ProductServiceStack extends cdk.Stack {
       {
         proxy: false,
         requestTemplates: {
-          "application/json": `{"id": "$input.params('id')"}`,
+          "application/json": `{"productId": "$input.params('productId')"}`,
         },
         integrationResponses: [
           {
@@ -168,7 +173,7 @@ export class ProductServiceStack extends cdk.Stack {
       ],
     });
 
-    const productByIdResource = productsResource.addResource("{id}");
+    const productByIdResource = productsResource.addResource("{productId}");
     productByIdResource.addMethod("GET", getProductByIdLambdaIntegration, {
       methodResponses: [
         {

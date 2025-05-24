@@ -166,13 +166,13 @@
         }
       }
     },
-    "/products/{id}": {
+    "/products/{productId}": {
       "get": {
         "consumes": ["application/json"],
         "produces": ["application/json"],
         "parameters": [
           {
-            "name": "id",
+            "name": "productId",
             "in": "path",
             "required": true,
             "type": "string"
@@ -220,7 +220,7 @@
             }
           },
           "requestTemplates": {
-            "application/json": "{\"id\": \"$input.params('id')\"}"
+            "application/json": "{\"productId\": \"$input.params('productId')\"}"
           },
           "passthroughBehavior": "when_no_match",
           "type": "aws"
@@ -230,7 +230,7 @@
         "consumes": ["application/json"],
         "parameters": [
           {
-            "name": "id",
+            "name": "productId",
             "in": "path",
             "required": true,
             "type": "string"

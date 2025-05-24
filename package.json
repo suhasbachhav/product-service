@@ -9,7 +9,7 @@
     "test": "jest",
     "cdk": "cdk",
     "build": "node build.mjs",
-    "deploy": "npm run cdk deploy",
+    "deploy": "npm run cdk deploy -all",
     "seed": "npx tsx scripts/seed.ts"
   },
   "devDependencies": {
@@ -33,6 +33,7 @@
     "aws-lambda": "^1.0.7",
     "constructs": "^10.0.0",
     "csv-parser": "^3.2.0",
+    "path": "^0.12.7",
     "uuid": "^11.1.0"
   }
 }
