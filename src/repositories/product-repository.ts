@@ -11,7 +11,7 @@ export interface Product {
 
 export class ProductRepository extends BaseRepository {
   constructor() {
-    super("Products");
+    super("products_v1");
   }
 
   async create(item: Omit<Product, "id">): Promise<Product> {

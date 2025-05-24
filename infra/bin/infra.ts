@@ -7,14 +7,6 @@ import { StockStack } from "../lib/stockStack";
 
 const app = new cdk.App();
 
-new ImportServiceStack(app, "ImportServiceStack", {
-    env: {
-        account: process.env.AWS_ACCOUNT || '199215057860',
-        region: process.env.AWS_REGION || 'ap-south-1',
-    },
-});
-
-
 const productStack = new ProductStack(app, 'ProductStack', {
     env: {
         account: process.env.AWS_ACCOUNT || '199215057860',
@@ -38,3 +30,9 @@ new ProductServiceStack(app, "ProductServiceStack", {
     stockTable: stockStack.stockTable,
 });
 
+new ImportServiceStack(app, "ImportServiceStack", {
+    env: {
+        account: process.env.AWS_ACCOUNT || '199215057860',
+        region: process.env.AWS_REGION || 'ap-south-1',
+    },
+});

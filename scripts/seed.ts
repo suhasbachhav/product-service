@@ -5,8 +5,8 @@ import { v4 as uuidv4 } from "uuid";
 const dynamoDbClient = new DynamoDBClient({ region: "eu-central-1" });
 const docClient = DynamoDBDocumentClient.from(dynamoDbClient);
 
-const PRODUCTS_TABLE_NAME = "Products";
-const STOCK_TABLE_NAME = "Stock";
+const PRODUCTS_TABLE_NAME = "products_v1";
+const STOCK_TABLE_NAME = "stock_v1";
 
 const seedTables = async () => {
   const products = [

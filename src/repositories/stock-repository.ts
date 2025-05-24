@@ -8,7 +8,7 @@ export interface Stock {
 
 export class StockRepository extends BaseRepository {
   constructor() {
-    super("Stock");
+    super("stock_v1");
   }
 
   async create(item: Stock): Promise<Stock> {
