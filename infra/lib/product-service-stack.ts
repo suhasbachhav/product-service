@@ -1,6 +1,10 @@
 import * as cdk from "aws-cdk-lib";
 import * as apigateway from "aws-cdk-lib/aws-apigateway";
 import * as dynamodb from "aws-cdk-lib/aws-dynamodb";
+import * as sqs from "aws-cdk-lib/aws-sqs";
+import * as sns from "aws-cdk-lib/aws-sns";
+import * as snsSubscriptions from "aws-cdk-lib/aws-sns-subscriptions";
+import * as lambdaEventSources from "aws-cdk-lib/aws-lambda-event-sources";
 import { Construct } from "constructs";
 import { createLambda } from "./utils/create-lambda";
 
@@ -10,6 +14,8 @@ interface ProductServiceStackProps extends cdk.StackProps {
 }
 
 export class ProductServiceStack extends cdk.Stack {
+  public readonly catalogItemsQueue: sqs.Queue;
+  private createProductTopic: sns.Topic;
 
   constructor(scope: Construct, id: string, props: ProductServiceStackProps) {
     super(scope, id, props);
@@ -50,6 +56,47 @@ export class ProductServiceStack extends cdk.Stack {
     props.stockTable.grant(createProductLambda, "dynamodb:Scan");
     props.productsTable.grantWriteData(createProductLambda);
     props.stockTable.grantWriteData(createProductLambda);
+
+    // Create SQS queue
+    this.catalogItemsQueue = new sqs.Queue(this, "CatalogItemsQueue", {
+      queueName: "catalog-items-queue",
+      visibilityTimeout: cdk.Duration.seconds(30),
+    });
+
+    // Create SNS topic
+    this.createProductTopic = new sns.Topic(this, "CreateProductTopic", {
+      topicName: "createProductTopic",
+      displayName: "Product Creation Notifications",
+    });
+
+    // Add email subscription to SNS topic
+    this.createProductTopic.addSubscription(
+      new snsSubscriptions.EmailSubscription("suhya25@gmail.com")
+    );
+
+    // Create catalogBatchProcess Lambda
+    const catalogBatchProcessLambda = createLambda(
+      this,
+      "catalogBatchProcess",
+      {
+        PRODUCTS_TABLE_NAME: props.productsTable.tableName,
+        STOCK_TABLE_NAME: props.stockTable.tableName,
+        CREATE_PRODUCT_TOPIC_ARN: this.createProductTopic.topicArn,
+      }
+    );
+
+    // Grant permissions to catalogBatchProcess Lambda
+    props.productsTable.grantWriteData(catalogBatchProcessLambda);
+    props.stockTable.grantWriteData(catalogBatchProcessLambda);
+    this.catalogItemsQueue.grantConsumeMessages(catalogBatchProcessLambda);
+    this.createProductTopic.grantPublish(catalogBatchProcessLambda);
+
+    // Configure SQS as event source for catalogBatchProcess Lambda
+    catalogBatchProcessLambda.addEventSource(
+      new lambdaEventSources.SqsEventSource(this.catalogItemsQueue, {
+        batchSize: 5,
+      })
+    );
 
     // Create integrations
     const getProductsLambdaIntegration = new apigateway.LambdaIntegration(

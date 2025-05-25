@@ -21,7 +21,7 @@ const stockStack = new StockStack(app, 'StockStack', {
     },
 });
 
-new ProductServiceStack(app, "ProductServiceStack", {
+const productServiceStack = new ProductServiceStack(app, "ProductServiceStack", {
     env: {
         account: process.env.AWS_ACCOUNT || '199215057860',
         region: process.env.AWS_REGION || 'ap-south-1',
@@ -35,4 +35,5 @@ new ImportServiceStack(app, "ImportServiceStack", {
         account: process.env.AWS_ACCOUNT || '199215057860',
         region: process.env.AWS_REGION || 'ap-south-1',
     },
+    catalogItemsQueue: productServiceStack.catalogItemsQueue,
 });

@@ -3,6 +3,12 @@ import { StockRepository, Stock } from "../repositories/stock-repository";
 
 export type ProductWithStock = Product & Omit<Stock, "product_id">;
 
+export interface CreateProductInput {
+  title: string;
+  description: string;
+  price: string | number;
+}
+
 export class ProductService {
   constructor(
     private readonly productRepository: ProductRepository,
@@ -28,6 +34,35 @@ export class ProductService {
     };
 
     return productWithStock;
+  }
+
+  async createProductFromInput(
+    input: CreateProductInput
+  ): Promise<ProductWithStock> {
+    if (!input.title || !input.description || input.price == null) {
+      throw new Error(
+        "Missing required fields: title, description, and price are required"
+      );
+    }
+
+    if (input.title.trim() === "" || input.description.trim() === "") {
+      throw new Error("Title and description cannot be empty");
+    }
+
+    const priceNum =
+      typeof input.price === "string" ? parseFloat(input.price) : input.price;
+
+    if (isNaN(priceNum) || priceNum < 0) {
+      throw new Error(
+        `Invalid price value: ${input.price}. Price must be a positive number`
+      );
+    }
+
+    return this.createProduct({
+      title: input.title.trim(),
+      description: input.description.trim(),
+      price: priceNum,
+    });
   }
 
   async getProduct(id: string): Promise<ProductWithStock> {
