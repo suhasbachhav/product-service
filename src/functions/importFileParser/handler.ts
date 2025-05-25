@@ -11,6 +11,8 @@ export default async function (event: S3Event) {
   const sqsClient = new SQSClient({ region: process.env.AWS_REGION });
   const queueUrl = process.env.SQS_QUEUE_URL;
 
+  console.log("queueUrl", queueUrl);
+
   if (!queueUrl) {
     throw new Error("SQS_QUEUE_URL environment variable is not set");
   }
@@ -40,6 +42,9 @@ export default async function (event: S3Event) {
           .pipe(csv())
           .on("data", (data) => {
             // Simple validation before pushing
+            console.info('data.title', data.title);
+            console.info('data.description', data.description);
+            console.info('data.price', data.price);
             if (data.title && data.description && data.price) {
               const priceNum = parseFloat(data.price);
               if (!isNaN(priceNum) && priceNum >= 0) {

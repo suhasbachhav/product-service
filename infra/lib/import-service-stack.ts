@@ -81,16 +81,6 @@ export class ImportServiceStack extends cdk.Stack {
         ],
       });
 
-    // Reference the SQS queue from the Product Service stack
-    const catlogQueues = `arn:aws:sqs:${props.env.region}:${props.env.account}:CatalogItemsQueue`;
-
-    console.log('catlogQueues', catlogQueues)
-    const catalogItemsQueue = sqs.Queue.fromQueueArn(
-      this,
-      "CatalogItemsQueue",
-      catlogQueues
-    );
-
     // Import File Parser
     const importFileParserLambda = createLambda(this, "importFileParser", {
       BUCKET_NAME: bucket.bucketName,
