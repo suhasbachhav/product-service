@@ -5,6 +5,7 @@ import { createLambda } from "./utils/create-lambda";
 import * as apigateway from "aws-cdk-lib/aws-apigateway";
 import * as s3n from "aws-cdk-lib/aws-s3-notifications";
 import * as sqs from "aws-cdk-lib/aws-sqs";
+import * as lambda from "aws-cdk-lib/aws-lambda";
 
 interface ImportServiceStackProps extends cdk.StackProps {
   env: {
@@ -65,9 +66,30 @@ export class ImportServiceStack extends cdk.Stack {
         ],
       });
 
+    const authorizerLambdaArn = cdk.Fn.importValue("BasicAuthorizerLambdaArn");
+
+    const authorizerLambda = lambda.Function.fromFunctionAttributes(
+      this,
+      "ImportedAuthorizerLambda",
+      {
+        functionArn: authorizerLambdaArn,
+        sameEnvironment: true,
+      }
+    );
+
+    const basicAuthorizer = new apigateway.TokenAuthorizer(
+      this,
+      "BasicTokenAuthorizer",
+      {
+        handler: authorizerLambda,
+        identitySource: apigateway.IdentitySource.header("Authorization"),
+      }
+    );
+
     api.root
       .addResource("import")
       .addMethod("GET", importProductsFileLambdaIntegration, {
+        authorizer: basicAuthorizer,
         requestParameters: {
           "method.request.querystring.fileName": true,
         },

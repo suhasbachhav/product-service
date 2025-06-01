@@ -4,8 +4,18 @@ import { ProductServiceStack } from "../lib/product-service-stack";
 import { ImportServiceStack } from "../lib/import-service-stack";
 import { ProductStack } from "../lib/productStack";
 import { StockStack } from "../lib/stockStack";
+import { AuthorizationServiceStack } from "../lib/authorization-service-stack";
+import "dotenv/config";
 
 const app = new cdk.App();
+
+
+new AuthorizationServiceStack(app, "AuthorizationServiceStack",{
+    env: {
+        account: process.env.AWS_ACCOUNT || '199215057860',
+        region: process.env.AWS_REGION || 'ap-south-1',
+    },
+});
 
 const productStack = new ProductStack(app, 'ProductStack', {
     env: {
