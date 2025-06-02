@@ -15,19 +15,13 @@ export default async function (event: {
 
   const { title, description, price } = event;
 
-  if (!title || !description || !price) {
-    throw new Error("Bad Request");
+  try {
+    return await productService.createProductFromInput({
+      title,
+      description,
+      price,
+    });
+  } catch (e) {
+    throw new Error("Bad Request", { cause: e });
   }
-
-  const priceNum = parseFloat(price);
-
-  if (isNaN(priceNum) || priceNum < 0) {
-    throw new Error("Bad Request");
-  }
-
-  return productService.createProduct({
-    title,
-    description,
-    price: priceNum,
-  });
 }

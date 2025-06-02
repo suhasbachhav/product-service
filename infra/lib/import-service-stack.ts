@@ -4,9 +4,18 @@ import { Construct } from "constructs";
 import { createLambda } from "./utils/create-lambda";
 import * as apigateway from "aws-cdk-lib/aws-apigateway";
 import * as s3n from "aws-cdk-lib/aws-s3-notifications";
+import * as sqs from "aws-cdk-lib/aws-sqs";
+
+interface ImportServiceStackProps extends cdk.StackProps {
+  env: {
+    region: string;
+    account: string;
+  },
+  catalogItemsQueue: sqs.Queue
+}
 
 export class ImportServiceStack extends cdk.Stack {
-  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
+  constructor(scope: Construct, id: string, props: ImportServiceStackProps) {
     super(scope, id, props);
 
     const bucket = new s3.Bucket(this, "ImportBucket", {
@@ -75,9 +84,11 @@ export class ImportServiceStack extends cdk.Stack {
     // Import File Parser
     const importFileParserLambda = createLambda(this, "importFileParser", {
       BUCKET_NAME: bucket.bucketName,
+      SQS_QUEUE_URL: props.catalogItemsQueue.queueUrl,
     });
 
     bucket.grantReadWrite(importFileParserLambda);
+    props.catalogItemsQueue.grantSendMessages(importFileParserLambda);
 
     // Configure S3 event notification for the uploaded folder
     bucket.addEventNotification(
