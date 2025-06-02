@@ -1,0 +1,21 @@
+{
+  "name": "lambda",
+  "version": "1.0.0",
+  "main": "createProduct.js",
+  "dependencies": {
+    "bowser": "^2.11.0",
+    "csv-parser": "^3.2.0",
+    "fast-xml-parser": "^4.4.1",
+    "strnum": "^1.1.2",
+    "tslib": "^2.8.1",
+    "uuid": "^9.0.1"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "types": "./createProduct.d.ts",
+  "description": ""
+}
