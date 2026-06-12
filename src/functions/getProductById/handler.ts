@@ -6,9 +6,9 @@ const productRepository = new ProductRepository();
 const stockRepository = new StockRepository();
 const productService = new ProductService(productRepository, stockRepository);
 
-export default async function (event: { id: string }) {
+export default async function (event: { productId: string }) {
   console.log("getProductById", event);
 
-  const { id } = event;
+  const id = event.productId;
   return productService.getProduct(id);
 }

@@ -45,7 +45,9 @@ export class ProductServiceStack extends cdk.Stack {
     });
 
     props.productsTable.grant(getProductByIdLambda, "dynamodb:Scan");
-    props.stockTable.grantReadData(getProductsLambda);
+    props.stockTable.grant(getProductByIdLambda, "dynamodb:Scan");
+    props.productsTable.grantReadData(getProductByIdLambda);
+    props.stockTable.grantReadData(getProductByIdLambda);
 
     const createProductLambda = createLambda(this, "createProduct", {
       PRODUCTS_TABLE_NAME: props.productsTable.tableName,
