@@ -1,0 +1,7 @@
+{
+  "name": "product-service-lambda",
+  "version": "0.1.0",
+  "dependencies": {
+    "csv-parser": "^3.2.0"
+  }
+}
